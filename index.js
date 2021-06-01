@@ -1,10 +1,10 @@
 'use strict';
-const os = require('os');
-const hasFlag = require('has-flag');
+var os = require('os');
+var hasFlag = require('has-flag');
 
-const env = process.env;
+var env = process.env;
 
-let forceColor;
+var forceColor;
 if (hasFlag('no-color') ||
 	hasFlag('no-colors') ||
 	hasFlag('color=false')) {
@@ -15,6 +15,7 @@ if (hasFlag('no-color') ||
 	hasFlag('color=always')) {
 	forceColor = true;
 }
+
 if ('FORCE_COLOR' in env) {
 	forceColor = env.FORCE_COLOR.length === 0 || parseInt(env.FORCE_COLOR, 10) !== 0;
 }
@@ -25,7 +26,7 @@ function translateLevel(level) {
 	}
 
 	return {
-		level,
+		level: level,
 		hasBasic: true,
 		has256: level >= 2,
 		has16m: level >= 3
@@ -51,7 +52,7 @@ function supportsColor(stream) {
 		return 0;
 	}
 
-	const min = forceColor ? 1 : 0;
+	var min = forceColor ? 1 : 0;
 
 	if (process.platform === 'win32') {
 		// Node.js 7.5.0 is the first version of Node.js to include a patch to
@@ -60,7 +61,7 @@ function supportsColor(stream) {
 		// release, and Node.js 7 is not. Windows 10 build 10586 is the first Windows
 		// release that supports 256 colors. Windows 10 build 14931 is the first release
 		// that supports 16m/TrueColor.
-		const osRelease = os.release().split('.');
+		var osRelease = os.release().split('.');
 		if (
 			Number(process.versions.node.split('.')[0]) >= 8 &&
 			Number(osRelease[0]) >= 10 &&
@@ -73,7 +74,9 @@ function supportsColor(stream) {
 	}
 
 	if ('CI' in env) {
-		if (['TRAVIS', 'CIRCLECI', 'APPVEYOR', 'GITLAB_CI'].some(sign => sign in env) || env.CI_NAME === 'codeship') {
+		if (['TRAVIS', 'CIRCLECI', 'APPVEYOR', 'GITLAB_CI'].some(function (sign) {
+			return sign in env;
+		}) || env.CI_NAME === 'codeship') {
 			return 1;
 		}
 
@@ -89,7 +92,7 @@ function supportsColor(stream) {
 	}
 
 	if ('TERM_PROGRAM' in env) {
-		const version = parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
+		var version = parseInt((env.TERM_PROGRAM_VERSION || '').split('.')[0], 10);
 
 		switch (env.TERM_PROGRAM) {
 			case 'iTerm.app':
@@ -120,7 +123,7 @@ function supportsColor(stream) {
 }
 
 function getSupportLevel(stream) {
-	const level = supportsColor(stream);
+	var level = supportsColor(stream);
 	return translateLevel(level);
 }
 
